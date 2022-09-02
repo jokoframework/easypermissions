@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private static final int RC_CAMERA_PERM = 123;
     private static final int RC_LOCATION_CONTACTS_PERM = 124;
-    private static final int RC_RECORD_PERM = 125;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +54,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         // Button click listener that will request two permissions.
         findViewById(R.id.button_location_and_contacts).setOnClickListener(v -> locationAndContactsTask());
 
-        // Button click listener that will request one permission.
-        findViewById(R.id.button_record).setOnClickListener(v -> recordTask());
+        // Button click listener that will launch an activity.
+        findViewById(R.id.button_record).setOnClickListener(v -> recordActivityStart());
 
+    }
+
+    //Launch a new activity
+    public void recordActivityStart() {
+        Intent recordIntent = new Intent(this, RecordActivity.class );
+        startActivity(recordIntent);
     }
 
     private boolean hasCameraPermission() {
@@ -109,26 +115,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     }
 
-    @AfterPermissionGranted(RC_RECORD_PERM)
-    public void recordTask() {
-        if (hasRecordPermission()) {
-            // Have permission, do the thing!
-            Toast.makeText(this, "TODO: Record things", Toast.LENGTH_LONG).show();
-        } else {
-            // Ask for one permission
-            EasyPermissions.requestPermissions(
-                    this,
-                    getString(R.string.rationale_record),
-                    RC_RECORD_PERM,
-                    Manifest.permission.RECORD_AUDIO);
-        }
-    }
-
-   public void recordActivityStart() {
-        Intent recordIntent = new Intent(this, RecordActivity.class );
-        startActivity(recordIntent);
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
@@ -141,10 +127,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
 
-        //Check if the permission to record audio was allowed and start the new activity (RecordActivity)
-        if(requestCode == RC_RECORD_PERM){
-            recordActivityStart();
-        }
     }
 
     @Override
@@ -157,10 +139,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             new AppSettingsDialog.Builder(this).build().show();
         }
 
-        //Check if permission was denied to record audio and start the new activity (RecordActivity)
-        if(requestCode == RC_RECORD_PERM){
-            recordActivityStart();
-        }
     }
 
     @Override
