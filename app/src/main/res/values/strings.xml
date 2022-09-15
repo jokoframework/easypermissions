@@ -11,8 +11,13 @@
         \n\nCamera: %s
         \nLocation &amp; Contacts: %s
         \nSMS: %s
+        \nRecord: %s
     </string>
     <string name="camera">Camera</string>
     <string name="location_and_contacts">Location and Contacts</string>
     <string name="sms">SMS</string>
+    <string name="record">Record</string>
+    <string name="rationale_record">This app needs access to your microphone so you can record audio.</string>
+    <string name="noMsg">Se denegó el permiso para grabar audio</string>
+    <string name="yesMsg">Se pudo obtener el permiso para grabar audio</string>
 </resources>

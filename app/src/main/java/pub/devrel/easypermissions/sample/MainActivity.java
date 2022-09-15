@@ -19,6 +19,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private static final int RC_CAMERA_PERM = 123;
     private static final int RC_LOCATION_CONTACTS_PERM = 124;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +53,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         // Button click listener that will request two permissions.
         findViewById(R.id.button_location_and_contacts).setOnClickListener(v -> locationAndContactsTask());
+
+        // Button click listener that will launch an activity.
+        findViewById(R.id.button_record).setOnClickListener(v -> recordActivityStart());
+
+    }
+
+    //Launch a new activity
+    public void recordActivityStart() {
+        Intent recordIntent = new Intent(this, RecordActivity.class );
+        startActivity(recordIntent);
     }
 
     private boolean hasCameraPermission() {
@@ -66,6 +79,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private boolean hasStoragePermission() {
         return EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    }
+
+    private boolean hasRecordPermission() {
+        return EasyPermissions.hasPermissions(this, Manifest.permission.RECORD_AUDIO);
     }
 
     @AfterPermissionGranted(RC_CAMERA_PERM)
@@ -102,8 +119,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         // EasyPermissions handles the request result.
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
@@ -111,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
+
     }
 
     @Override
@@ -122,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             new AppSettingsDialog.Builder(this).build().show();
         }
+
     }
 
     @Override
@@ -134,13 +151,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             // Do something after user returned from app settings screen, like showing a Toast.
             Toast.makeText(
-                    this,
-                    getString(R.string.returned_from_app_settings_to_activity,
-                              hasCameraPermission() ? yes : no,
-                              hasLocationAndContactsPermissions() ? yes : no,
-                              hasSmsPermission() ? yes : no),
-                    Toast.LENGTH_LONG)
-                    .show();
+                            this,
+                            getString(R.string.returned_from_app_settings_to_activity,
+                                    hasCameraPermission() ? yes : no,
+                                    hasLocationAndContactsPermissions() ? yes : no,
+                                    hasSmsPermission() ? yes : no,
+                                    hasRecordPermission() ? yes : no),
+                            Toast.LENGTH_LONG).
+                    show();
         }
     }
 
@@ -153,4 +171,5 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void onRationaleDenied(int requestCode) {
         Log.d(TAG, "onRationaleDenied:" + requestCode);
     }
+
 }
